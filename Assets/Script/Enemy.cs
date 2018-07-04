@@ -32,6 +32,10 @@ public class Enemy : MonoBehaviour {
         health -= (health-damage>=0) ? damage : health;
         if (!seeCollider.lookPlayer)
             directionIsRight = !directionIsRight;
+        if(health==0)
+        {
+            Destroy(gameObject);
+        }
     }
     public void Update()
     {
@@ -42,6 +46,15 @@ public class Enemy : MonoBehaviour {
                 GoAttack();
             }
         }
+        else
+        {
+            if (!canMoveCollider.canMove)
+                directionIsRight = !directionIsRight;
+            var angle = (directionIsRight) ? 0f : 180f;
+            var direction = (directionIsRight) ? 1f : -1f;
+            transform.rotation = Quaternion.Euler(0f, angle, 0f);
+            rigid.velocity = new Vector2(moveSpeed * direction, rigid.velocity.y);
+        }
         if(!canAttack)
         {
             delay += Time.deltaTime;
@@ -51,16 +64,12 @@ public class Enemy : MonoBehaviour {
                 canAttack = true;
             }
         }
-        if (!seeCollider.lookPlayer)
+    }
+    public void OnCollisionEnter2D(Collision2D collision)
+    {
+        if(collision.transform.tag=="Break")
         {
-            if (!canMoveCollider.canMove)
-                directionIsRight = !directionIsRight;
-            var angle = (directionIsRight) ? 0f : 180f;
-            var direction = (directionIsRight) ? 1f : -1f;
-            transform.rotation = Quaternion.Euler(0f, angle, 0f);
-            rigid.MovePosition(new Vector2
-                (transform.position.x + (direction * Time.deltaTime * moveSpeed),
-                transform.position.y));
+            directionIsRight = !directionIsRight;
         }
     }
     public void GoAttack()

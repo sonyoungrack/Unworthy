@@ -9,6 +9,7 @@ TagManager:
   - EnemyWeapon
   - Stage
   - Ground
+  - Break
   layers:
   - Default
   - TransparentFX
