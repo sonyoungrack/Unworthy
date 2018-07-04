@@ -1,0 +1,23 @@
+fileFormatVersion: 2
+guid: 5c69ae7dc81f3c5488ba32c486625bf5
+timeCreated: 1530701049
+licenseType: Free
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: SansTaiNa
+  fontNames:
+  - SansTaiNa
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
