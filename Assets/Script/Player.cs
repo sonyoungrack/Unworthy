@@ -30,9 +30,13 @@ public class Player : MonoBehaviour {
         }
         if(Input.GetAxisRaw("Horizontal")!=0f)
         {
-            var angle = (Input.GetAxisRaw("Horizontal") == 1f) ? 0f : 180f;
-            transform.rotation=Quaternion.Euler(0f,angle,0f);
-            rigid.MovePosition(new Vector2(transform.position.x + (Input.GetAxisRaw("Horizontal") * Time.deltaTime * moveSpeed), transform.position.y));
+            if(!weapon.attacking)
+            {
+                anim.Play("Work");
+                var angle = (Input.GetAxisRaw("Horizontal") == 1f) ? 0f : 180f;
+                transform.rotation = Quaternion.Euler(0f, angle, 0f);
+                rigid.MovePosition(new Vector2(transform.position.x + (Input.GetAxisRaw("Horizontal") * Time.deltaTime * moveSpeed), transform.position.y));
+            }
         }
     }
     public void GoAttack()
