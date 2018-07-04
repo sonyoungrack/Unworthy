@@ -5,12 +5,14 @@ using UnityEngine;
 public enum ColliderType
 {
     Eyesight,
-    Crash_Determination
+    Crash_Determination,
+    Can_Move
 }
 public class ColliderBranch : MonoBehaviour {
     private GameObject parent;
     public ColliderType type;
     private Enemy enemy;
+    public bool canMove = true;
 
     public bool lookPlayer = false;
     public void Start()
@@ -18,7 +20,7 @@ public class ColliderBranch : MonoBehaviour {
         parent = gameObject.transform.parent.gameObject;
         enemy = parent.GetComponent<Enemy>();
     }
-    public void OnTriggerStay2D(Collider2D collision)
+    public void OnTriggerEnter2D(Collider2D collision)
     {
         if(type==ColliderType.Eyesight)
         {
@@ -27,9 +29,29 @@ public class ColliderBranch : MonoBehaviour {
                 lookPlayer = true;
             }
         }
+        if (type == ColliderType.Can_Move)
+        {
+            if (collision.tag == "Ground")
+            {
+                canMove = true;
+            }
+        }
     }
-    public void LateUpdate()
+    public void OnTriggerExit2D(Collider2D collision)
     {
-        lookPlayer = false;
+        if (type == ColliderType.Eyesight)
+        {
+            if (collision.tag == "Player")
+            {
+                lookPlayer = false;
+            }
+        }
+        if (type == ColliderType.Can_Move)
+        {
+            if (collision.tag == "Ground")
+            {
+                canMove = false;
+            }
+        }
     }
 }

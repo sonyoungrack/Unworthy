@@ -16,17 +16,22 @@ public class Enemy : MonoBehaviour {
     public bool canAttack = true;
     public float attackDelay = 2f;
     public EnemyType type;
+    private Rigidbody2D rigid;
     public ColliderBranch seeCollider;
+    public ColliderBranch canMoveCollider;
+    public bool directionIsRight = true;
+    public float moveSpeed = 1f;
     private float delay=0f;
     public void Start()
     {
         anim = GetComponent<Animator>();
+        rigid = GetComponent<Rigidbody2D>();
     }
     public void MinusHealth(int damage)
     {
         health -= (health-damage>=0) ? damage : health;
         if (!seeCollider.lookPlayer)
-            transform.Rotate(0f, 180f, 0f);
+            directionIsRight = !directionIsRight;
     }
     public void Update()
     {
@@ -45,6 +50,17 @@ public class Enemy : MonoBehaviour {
                 delay = 0f;
                 canAttack = true;
             }
+        }
+        if (!seeCollider.lookPlayer)
+        {
+            if (!canMoveCollider.canMove)
+                directionIsRight = !directionIsRight;
+            var angle = (directionIsRight) ? 0f : 180f;
+            var direction = (directionIsRight) ? 1f : -1f;
+            transform.rotation = Quaternion.Euler(0f, angle, 0f);
+            rigid.MovePosition(new Vector2
+                (transform.position.x + (direction * Time.deltaTime * moveSpeed),
+                transform.position.y));
         }
     }
     public void GoAttack()
