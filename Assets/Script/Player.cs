@@ -10,14 +10,22 @@ public class Player : MonoBehaviour {
     public Weapon weapon;
     private Rigidbody2D rigid;
     public float moveSpeed = 1f;
+
+    public Vector3 distance;
+    public Vector3 currentPosition;
+
 	// Use this for initialization
-	void Start () {
+	private void Start () 
+    {
+        currentPosition = transform.position;
 	}
     private void Awake()
     {
         anim = GetComponent<Animator>();
         rigid = GetComponent<Rigidbody2D>();
     }
+
+
     public void MinusHealth(int damage)
     {
         health -= (health - damage >= 0) ? damage : health;
@@ -38,6 +46,8 @@ public class Player : MonoBehaviour {
                 rigid.MovePosition(new Vector2(transform.position.x + (Input.GetAxisRaw("Horizontal") * Time.deltaTime * moveSpeed), transform.position.y));
             }
         }
+        distance = transform.position - currentPosition;
+        currentPosition = transform.position;
     }
     public void GoAttack()
     {

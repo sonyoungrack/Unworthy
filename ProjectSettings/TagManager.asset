@@ -8,6 +8,7 @@ TagManager:
   - PlayerWeapon
   - EnemyWeapon
   - Stage
+  - Ground
   layers:
   - Default
   - TransparentFX
@@ -18,8 +19,8 @@ TagManager:
   - 
   - 
   - 
-  - 
-  - 
+  - Map
+  - BackGround
   - 
   - 
   - 
@@ -44,4 +45,13 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: BackGround
+    uniqueID: 775779635
+    locked: 0
+  - name: Map
+    uniqueID: 3539260911
+    locked: 0
+  - name: UI
+    uniqueID: 764911135
     locked: 0
