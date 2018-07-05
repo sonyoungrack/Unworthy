@@ -16,26 +16,52 @@ public class Enemy : MonoBehaviour {
     public bool canAttack = true;
     public float attackDelay = 2f;
     public EnemyType type;
+    private Rigidbody2D rigid;
     public ColliderBranch seeCollider;
+    public ColliderBranch canMoveCollider;
+    public bool directionIsRight = true;
+    public float moveSpeed = 1f;
     private float delay=0f;
+    public bool discoveryPlayer = false;
     public void Start()
     {
         anim = GetComponent<Animator>();
+        rigid = GetComponent<Rigidbody2D>();
     }
     public void MinusHealth(int damage)
     {
         health -= (health-damage>=0) ? damage : health;
         if (!seeCollider.lookPlayer)
-            transform.Rotate(0f, 180f, 0f);
+            directionIsRight = !directionIsRight;
+        if(health==0)
+        {
+            Destroy(gameObject);
+        }
     }
     public void Update()
     {
         if (seeCollider.lookPlayer)
         {
+            discoveryPlayer = true;
             if (canAttack)
             {
                 GoAttack();
             }
+        }
+        else
+        {
+            if (discoveryPlayer)
+            {
+                discoveryPlayer = false;
+                directionIsRight = seeCollider.missingPlayerDirectionIsRight;
+            }
+            if (!canMoveCollider.canMove)
+                directionIsRight = !directionIsRight;
+            anim.Play("Work");
+            var angle = (directionIsRight) ? 0f : 180f;
+            var direction = (directionIsRight) ? 1f : -1f;
+            transform.rotation = Quaternion.Euler(0f, angle, 0f);
+            rigid.velocity = new Vector2(moveSpeed * direction, rigid.velocity.y);
         }
         if(!canAttack)
         {
@@ -45,6 +71,13 @@ public class Enemy : MonoBehaviour {
                 delay = 0f;
                 canAttack = true;
             }
+        }
+    }
+    public void OnCollisionEnter2D(Collision2D collision)
+    {
+        if(collision.transform.tag=="Break")
+        {
+            directionIsRight = !directionIsRight;
         }
     }
     public void GoAttack()

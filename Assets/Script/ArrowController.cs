@@ -32,7 +32,7 @@ public class ArrowController : MonoBehaviour {
             collision.GetComponent<Enemy>().MinusHealth(damage);
             Destroy(gameObject);
         }
-        if(collision.tag=="Stage")
+        if(collision.tag=="Ground")
             Destroy(gameObject);
     }
 }

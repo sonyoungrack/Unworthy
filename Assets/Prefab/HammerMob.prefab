@@ -24,6 +24,23 @@ GameObject:
   - component: {fileID: 61289014188418124}
   m_Layer: 0
   m_Name: Hammer
+  m_TagString: EnemyWeapon
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &1334605011295224
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4726123228608832}
+  - component: {fileID: 61301382114147960}
+  - component: {fileID: 114917595591368708}
+  m_Layer: 0
+  m_Name: CanMoveCollider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -121,6 +138,19 @@ Transform:
   m_Father: {fileID: 4865825305628648}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4726123228608832
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1334605011295224}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4865825305628648}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4865825305628648
 Transform:
   m_ObjectHideFlags: 1
@@ -134,6 +164,7 @@ Transform:
   - {fileID: 4617812899506220}
   - {fileID: 4461210053299104}
   - {fileID: 4589743010989242}
+  - {fileID: 4726123228608832}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -182,6 +213,31 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.58, y: 0.37906146}
   m_EdgeRadius: 0
+--- !u!61 &61301382114147960
+BoxCollider2D:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1334605011295224}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: -0.72224844, y: -1.2530193}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 0.17247891, y: 0.63587475}
+  m_EdgeRadius: 0
 --- !u!61 &61558893881476152
 BoxCollider2D:
   m_ObjectHideFlags: 1
@@ -219,7 +275,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.40367258, y: -0.114081144}
+  m_Offset: {x: -0.69160074, y: -0.114081144}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -230,7 +286,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 2.3689768, y: 1.7897935}
+  m_Size: {x: 1.7931205, y: 1.7897935}
   m_EdgeRadius: 0
 --- !u!95 &95669819181854366
 Animator:
@@ -262,6 +318,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackAnimationPlayTime: 1
   type: 2
+  attacking: 0
   attack: 0
   projectile: {fileID: 0}
 --- !u!114 &114208225128299524
@@ -276,6 +333,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 0
+  canMove: 1
   lookPlayer: 0
 --- !u!114 &114671937723761676
 MonoBehaviour:
@@ -295,6 +353,23 @@ MonoBehaviour:
   attackDelay: 2
   type: 1
   seeCollider: {fileID: 114208225128299524}
+  canMoveCollider: {fileID: 114917595591368708}
+  directionIsRight: 1
+  moveSpeed: 1
+--- !u!114 &114917595591368708
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1334605011295224}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26b66f60baeb6eb4d8828b29ebb63f52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 2
+  canMove: 1
+  lookPlayer: 0
 --- !u!212 &212433620457414200
 SpriteRenderer:
   m_ObjectHideFlags: 1

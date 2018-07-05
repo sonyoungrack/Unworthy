@@ -9,6 +9,10 @@ TagManager:
   - EnemyWeapon
   - Stage
   - Ground
+<<<<<<< HEAD
+=======
+  - Break
+>>>>>>> bf571eb5b6b54992c9aa594966f4a5070552b094
   layers:
   - Default
   - TransparentFX
