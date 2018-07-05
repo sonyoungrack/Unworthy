@@ -13,6 +13,7 @@ public class ColliderBranch : MonoBehaviour {
     public ColliderType type;
     private Enemy enemy;
     public bool canMove = true;
+    public bool missingPlayerDirectionIsRight = true;
 
     public bool lookPlayer = false;
     public void Start()
@@ -44,6 +45,14 @@ public class ColliderBranch : MonoBehaviour {
             if (collision.tag == "Player")
             {
                 lookPlayer = false;
+                if (collision.transform.position.x - transform.position.x > 0)
+                {
+                    missingPlayerDirectionIsRight = true;
+                }
+                else
+                {
+                    missingPlayerDirectionIsRight = false;
+                }
             }
         }
         if (type == ColliderType.Can_Move)

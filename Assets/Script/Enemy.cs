@@ -22,6 +22,7 @@ public class Enemy : MonoBehaviour {
     public bool directionIsRight = true;
     public float moveSpeed = 1f;
     private float delay=0f;
+    public bool discoveryPlayer = false;
     public void Start()
     {
         anim = GetComponent<Animator>();
@@ -41,6 +42,7 @@ public class Enemy : MonoBehaviour {
     {
         if (seeCollider.lookPlayer)
         {
+            discoveryPlayer = true;
             if (canAttack)
             {
                 GoAttack();
@@ -48,8 +50,14 @@ public class Enemy : MonoBehaviour {
         }
         else
         {
+            if (discoveryPlayer)
+            {
+                discoveryPlayer = false;
+                directionIsRight = seeCollider.missingPlayerDirectionIsRight;
+            }
             if (!canMoveCollider.canMove)
                 directionIsRight = !directionIsRight;
+            anim.Play("Work");
             var angle = (directionIsRight) ? 0f : 180f;
             var direction = (directionIsRight) ? 1f : -1f;
             transform.rotation = Quaternion.Euler(0f, angle, 0f);
