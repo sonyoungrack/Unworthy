@@ -26,6 +26,8 @@ public class Player : MonoBehaviour {
     [Space]
     [Header("Item")]
     public int PortionHillRange = 10;
+    public int havePortion = 1;
+    public Text havePortionText;
     public Weapon weapon;
     [Space]
     [Header("Reduction amount")]
@@ -45,6 +47,7 @@ public class Player : MonoBehaviour {
     private void Start () 
     {
         currentPosition = transform.position;
+        havePortionText.text = "x" + havePortion;
 	}
     private void Awake()
     {
@@ -60,7 +63,13 @@ public class Player : MonoBehaviour {
     }
     public void DrinkingPortion()
     {
-        
+        if(havePortion>0)
+        {
+            health = (health + PortionHillRange > maxHealth) ? maxHealth : health + PortionHillRange;
+            StartCoroutine(HealthBarControll(true));
+            havePortion--;
+            havePortionText.text = "x" + havePortion;
+        }
     }
     public void MinusHealth(int damage)
     {
@@ -75,14 +84,25 @@ public class Player : MonoBehaviour {
         var nowHealth = health;
         health -= (health - damage >= 0) ? damage : health;
         if (healthBar != null)
-            StartCoroutine(MinusHealthBar());
+            StartCoroutine(HealthBarControll(false));
     }
-    public IEnumerator MinusHealthBar()
+    public IEnumerator HealthBarControll(bool isPlus)
     {
-        while(healthBar.fillAmount>=(float)health/maxHealth)
+        if (!isPlus)
         {
-            healthBar.fillAmount -= Time.deltaTime;
-            yield return 0;
+            while (healthBar.fillAmount >= (float)health / maxHealth)
+            {
+                healthBar.fillAmount -= Time.deltaTime;
+                yield return 0;
+            }
+        }
+        else
+        {
+            while (healthBar.fillAmount <= (float)health / maxHealth)
+            {
+                healthBar.fillAmount += Time.deltaTime;
+                yield return 0;
+            }
         }
         healthBar.fillAmount = (float)health / maxHealth;
     }

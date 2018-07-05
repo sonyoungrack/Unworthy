@@ -333,6 +333,7 @@
     <Compile Include="Assets\Script\MoveBackground_far.cs" />
     <Compile Include="Assets\Script\MoveBackground_middle.cs" />
     <Compile Include="Assets\Script\Player.cs" />
+    <Compile Include="Assets\Script\TestScript.cs" />
     <Compile Include="Assets\Script\Weapon.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
