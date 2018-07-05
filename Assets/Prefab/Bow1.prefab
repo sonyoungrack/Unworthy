@@ -84,6 +84,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackAnimationPlayTime: 1
   type: 1
+  attacking: 0
   attack: 0
   projectile: {fileID: 1827615593989950, guid: f9fb8dd7556ee244c9b5290817f28f7b, type: 2}
 --- !u!212 &212593516902026574
@@ -163,7 +164,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 10
   m_Sprite: {fileID: 21300000, guid: 052a0089a4f72ef4386d28a92ef7d529, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0

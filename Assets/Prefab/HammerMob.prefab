@@ -334,6 +334,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 0
   canMove: 1
+  missingPlayerDirectionIsRight: 1
   lookPlayer: 0
 --- !u!114 &114671937723761676
 MonoBehaviour:
@@ -356,6 +357,7 @@ MonoBehaviour:
   canMoveCollider: {fileID: 114917595591368708}
   directionIsRight: 1
   moveSpeed: 1
+  discoveryPlayer: 0
 --- !u!114 &114917595591368708
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -369,6 +371,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 2
   canMove: 1
+  missingPlayerDirectionIsRight: 1
   lookPlayer: 0
 --- !u!212 &212433620457414200
 SpriteRenderer:
@@ -447,7 +450,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 10
   m_Sprite: {fileID: 21300000, guid: 5e9acca30bce0a54487a1c57395bdbed, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
