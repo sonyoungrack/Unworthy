@@ -11,7 +11,6 @@ public enum EnemyType
 public class Enemy : MonoBehaviour {
     public int health = 5;
     private Animator anim;
-    public Weapon weapon;
     public int damage = 1;
     public bool canAttack = true;
     public float attackDelay = 2f;
@@ -23,6 +22,7 @@ public class Enemy : MonoBehaviour {
     public float moveSpeed = 1f;
     private float delay=0f;
     public bool discoveryPlayer = false;
+
     public void Start()
     {
         anim = GetComponent<Animator>();
@@ -83,7 +83,6 @@ public class Enemy : MonoBehaviour {
     public void GoAttack()
     {
         anim.Play("Attack");
-        weapon.GoAttack(damage);
         canAttack = false;
     }
 }

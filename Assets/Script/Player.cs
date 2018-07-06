@@ -13,6 +13,7 @@ public class Player : MonoBehaviour {
     public float attackDelay = 1f;
     public float moveSpeed = 1f;
     public float rollingInvincibilityTime = 1f;
+    public float rollingDistance = 2f;
 
     [Space]
     [Header("UI")]
@@ -28,7 +29,6 @@ public class Player : MonoBehaviour {
     public int PortionHillRange = 10;
     public int havePortion = 1;
     public Text havePortionText;
-    public Weapon weapon;
     [Space]
     [Header("Reduction amount")]
     public float attackStamina = 15f;
@@ -43,6 +43,13 @@ public class Player : MonoBehaviour {
     private bool invincibility = false;
     private bool guard = true;
     private float guardGageDelay = 0f;
+    private bool attacking = false;
+    private float attackingDelay = 0f;
+    private bool rolling = false;
+    private float rollingDelay = 0f;
+    [Space]
+    [Header("ColliderBranch")]
+    public ColliderBranch attackRangeCollider;
     // Use this for initialization
     private void Start () 
     {
@@ -112,11 +119,12 @@ public class Player : MonoBehaviour {
         {
             GoAttack();
         }
-        if (Input.GetAxisRaw("Horizontal") != 0f)
+        if (Input.GetAxisRaw("Horizontal") != 0)
         {
-            if (!weapon.attacking)
+            if(!attacking&&!rolling)
             {
-                anim.Play("Work");
+                anim.Play("Run");
+                anim.SetBool("Running", true);
                 var angle = (Input.GetAxisRaw("Horizontal") == 1f) ? 0f : 180f;
 
                 transform.rotation = Quaternion.Euler(0f, angle, 0f);
@@ -125,7 +133,12 @@ public class Player : MonoBehaviour {
         }
         else
         {
+            anim.SetBool("Running", false);
             rigid.velocity = new Vector2(0f, rigid.velocity.y);
+        }
+        if(Input.GetKeyDown(KeyCode.LeftControl))
+        {
+            GoRolling();
         }
         distance = transform.position - currentPosition;
         currentPosition = transform.position;
@@ -151,6 +164,28 @@ public class Player : MonoBehaviour {
                 guardGageDelay = 0f;
             }
         }
+        if(attacking)
+        {
+            attackingDelay += Time.deltaTime;
+            var tempTime = anim.GetBool("DoubleAttack") ? 0.9f : 0.6f;
+            if (attackingDelay >= tempTime)
+            {
+                attackingDelay = 0f;
+                attacking = false;
+            }
+        }
+        if(rolling)
+        {
+            rollingDelay += Time.deltaTime;
+            var angle = (transform.localRotation.y == -1) ? -1 : 1;
+            rigid.MovePosition(new Vector2(transform.position.x+(angle*Time.deltaTime*rollingDistance),transform.position.y));
+            if (rollingDelay >= 0.5f)
+            {
+                rollingDelay = 0f;
+                rolling = false;
+                gameObject.layer = 0;
+            }
+        }
     }
     public IEnumerator MinusStamina()
     {
@@ -166,18 +201,38 @@ public class Player : MonoBehaviour {
     public void GoAttack()
     {
         if (stamina < attackStamina)
+        {
             return;
+        }
         stamina -= attackStamina;
-        anim.Play("Attack");
-        weapon.GoAttack(damage);
+        if(attackRangeCollider.mobList.Count!=0)
+        {
+            foreach (var obj in attackRangeCollider.mobList)
+            {
+                obj.GetComponent<Enemy>().MinusHealth(damage);
+            }
+        }
+        if (attacking)
+        {
+            anim.SetBool("DoubleAttack", true);
+            return;
+        }
+        else
+        {
+            anim.SetBool("DoubleAttack", false);
+            anim.Play("Attack");
+        }
+        attacking = true;
     }
     public void GoRolling()
     {
-        if (stamina < rollingStamina)
+        if (stamina < rollingStamina||rolling)
             return;
         stamina -= rollingStamina;
-        anim.Play("Rolling");
+        anim.Play("Roll");
+        rolling = true;
         Invincibility();
+        gameObject.layer = 8;
     }
     public void Invincibility()
     {

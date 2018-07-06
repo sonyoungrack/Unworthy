@@ -328,6 +328,7 @@
     <Compile Include="Assets\Script\Camera.cs" />
     <Compile Include="Assets\Script\ColliderBranch.cs" />
     <Compile Include="Assets\Script\Enemy.cs" />
+    <Compile Include="Assets\Script\GameDirector.cs" />
     <Compile Include="Assets\Script\MagicEffact.cs" />
     <Compile Include="Assets\Script\MoveBackground_close.cs" />
     <Compile Include="Assets\Script\MoveBackground_far.cs" />

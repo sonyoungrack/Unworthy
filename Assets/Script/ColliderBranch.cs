@@ -6,20 +6,19 @@ public enum ColliderType
 {
     Eyesight,
     Crash_Determination,
-    Can_Move
+    Can_Move,
+    AttackRange
 }
 public class ColliderBranch : MonoBehaviour {
-    private GameObject parent;
     public ColliderType type;
-    private Enemy enemy;
     public bool canMove = true;
     public bool missingPlayerDirectionIsRight = true;
+    public List<GameObject> mobList;
 
     public bool lookPlayer = false;
     public void Start()
     {
-        parent = gameObject.transform.parent.gameObject;
-        enemy = parent.GetComponent<Enemy>();
+        mobList = new List<GameObject>();
     }
     public void OnTriggerEnter2D(Collider2D collision)
     {
@@ -37,6 +36,16 @@ public class ColliderBranch : MonoBehaviour {
                 canMove = true;
             }
         }
+        if (type == ColliderType.AttackRange)
+        {
+            if (collision.tag == "Enemy")
+            {
+                mobList.Add(collision.gameObject);
+            }
+        }
+    }
+    public void OnTriggerStay2D(Collider2D collision)
+    {
     }
     public void OnTriggerExit2D(Collider2D collision)
     {
