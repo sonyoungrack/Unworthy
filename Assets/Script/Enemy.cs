@@ -57,7 +57,7 @@ public class Enemy : MonoBehaviour {
             }
             if (!canMoveCollider.canMove)
                 directionIsRight = !directionIsRight;
-            anim.Play("Work");
+            anim.Play("Run");
             var angle = (directionIsRight) ? 0f : 180f;
             var direction = (directionIsRight) ? 1f : -1f;
             transform.rotation = Quaternion.Euler(0f, angle, 0f);
@@ -82,6 +82,7 @@ public class Enemy : MonoBehaviour {
     }
     public void GoAttack()
     {
+        seeCollider.mob.GetComponent<Player>().MinusHealth(damage);
         anim.Play("Attack");
         canAttack = false;
     }

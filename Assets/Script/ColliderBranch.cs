@@ -13,12 +13,12 @@ public class ColliderBranch : MonoBehaviour {
     public ColliderType type;
     public bool canMove = true;
     public bool missingPlayerDirectionIsRight = true;
-    public List<GameObject> mobList;
+    public GameObject mob;
 
     public bool lookPlayer = false;
     public void Start()
     {
-        mobList = new List<GameObject>();
+        
     }
     public void OnTriggerEnter2D(Collider2D collision)
     {
@@ -27,6 +27,7 @@ public class ColliderBranch : MonoBehaviour {
             if(collision.tag=="Player")
             {
                 lookPlayer = true;
+                mob = collision.gameObject;
             }
         }
         if (type == ColliderType.Can_Move)
@@ -36,16 +37,13 @@ public class ColliderBranch : MonoBehaviour {
                 canMove = true;
             }
         }
-        if (type == ColliderType.AttackRange)
+        if(type==ColliderType.AttackRange)
         {
             if (collision.tag == "Enemy")
             {
-                mobList.Add(collision.gameObject);
+                mob = collision.gameObject;
             }
         }
-    }
-    public void OnTriggerStay2D(Collider2D collision)
-    {
     }
     public void OnTriggerExit2D(Collider2D collision)
     {
@@ -54,6 +52,7 @@ public class ColliderBranch : MonoBehaviour {
             if (collision.tag == "Player")
             {
                 lookPlayer = false;
+                mob = null;
                 if (collision.transform.position.x - transform.position.x > 0)
                 {
                     missingPlayerDirectionIsRight = true;
@@ -69,6 +68,13 @@ public class ColliderBranch : MonoBehaviour {
             if (collision.tag == "Ground")
             {
                 canMove = false;
+            }
+        }
+        if (type == ColliderType.AttackRange)
+        {
+            if (collision.tag == "Enemy")
+            {
+                mob = null;
             }
         }
     }

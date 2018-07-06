@@ -3,8 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+public enum Weapon
+{
+    Sword,
+    Bow,
+    Hammer
+}
 public class Player : MonoBehaviour {
     [Header("Ability")]
+    public Weapon weapon;
     public int health = 100;
     public int maxHealth = 100;
     public float stamina = 100f;
@@ -47,6 +54,7 @@ public class Player : MonoBehaviour {
     private float attackingDelay = 0f;
     private bool rolling = false;
     private float rollingDelay = 0f;
+    private float staminaChargingDelay = 0f;
     [Space]
     [Header("ColliderBranch")]
     public ColliderBranch attackRangeCollider;
@@ -148,6 +156,15 @@ public class Player : MonoBehaviour {
                 stamina += maxStamina * Time.deltaTime / staminaChargingPerSecend;
             staminaBar.fillAmount = stamina / maxStamina;
         }
+        else
+        {
+            staminaChargingDelay += Time.deltaTime;
+            if(staminaChargingDelay>=1f)
+            {
+                staminaChargingDelay = 0f;
+                staminaCharging = true;
+            }
+        }
         if(invincibility)
         {
             invincibilityDelay += Time.deltaTime;
@@ -172,6 +189,10 @@ public class Player : MonoBehaviour {
             {
                 attackingDelay = 0f;
                 attacking = false;
+                if (attackRangeCollider.mob != null)
+                {
+                    attackRangeCollider.mob.GetComponent<Enemy>().MinusHealth(damage);
+                }
             }
         }
         if(rolling)
@@ -186,32 +207,30 @@ public class Player : MonoBehaviour {
                 gameObject.layer = 0;
             }
         }
+        if(Input.GetKeyDown(KeyCode.X))
+        {
+            DrinkingPortion();
+        }
     }
     public IEnumerator MinusStamina()
     {
         while(staminaBar.fillAmount>stamina/maxStamina)
         {
             staminaCharging = false;
-            stamina -= Time.deltaTime;
+            staminaBar.fillAmount -= Time.deltaTime;
+            staminaChargingDelay = 0f;
             yield return 0;
         }
-        staminaCharging = true;
         staminaBar.fillAmount = stamina / maxStamina;
     }
     public void GoAttack()
     {
-        if (stamina < attackStamina)
+        if (stamina < attackStamina||rolling)
         {
             return;
         }
         stamina -= attackStamina;
-        if(attackRangeCollider.mobList.Count!=0)
-        {
-            foreach (var obj in attackRangeCollider.mobList)
-            {
-                obj.GetComponent<Enemy>().MinusHealth(damage);
-            }
-        }
+        StartCoroutine(MinusStamina());
         if (attacking)
         {
             anim.SetBool("DoubleAttack", true);
@@ -226,9 +245,10 @@ public class Player : MonoBehaviour {
     }
     public void GoRolling()
     {
-        if (stamina < rollingStamina||rolling)
+        if (stamina < rollingStamina||rolling||attacking)
             return;
         stamina -= rollingStamina;
+        StartCoroutine(MinusStamina());
         anim.Play("Roll");
         rolling = true;
         Invincibility();
