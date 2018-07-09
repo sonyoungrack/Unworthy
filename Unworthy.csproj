@@ -13,13 +13,11 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile>
-    </CompilerResponseFile>
+    <CompilerResponseFile></CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows64:19</UnityBuildTarget>
     <UnityVersion>2017.3.1f1</UnityVersion>
-    <RootNamespace>
-    </RootNamespace>
+    <RootNamespace></RootNamespace>
     <LangVersion>4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -327,6 +325,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Script\ArrowController.cs" />
+    <Compile Include="Assets\Script\ArrowDirection.cs" />
     <Compile Include="Assets\Script\Camera.cs" />
     <Compile Include="Assets\Script\ColliderBranch.cs" />
     <Compile Include="Assets\Script\Enemy.cs" />
@@ -336,6 +335,7 @@
     <Compile Include="Assets\Script\MoveBackground_far.cs" />
     <Compile Include="Assets\Script\MoveBackground_middle.cs" />
     <Compile Include="Assets\Script\Player.cs" />
+    <Compile Include="Assets\Script\Potal.cs" />
     <Compile Include="Assets\Script\TestScript.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

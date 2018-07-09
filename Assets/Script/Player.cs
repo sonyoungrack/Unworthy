@@ -19,8 +19,8 @@ public class Player : MonoBehaviour {
     public int damage = 1;
     public float attackDelay = 1f;
     public float moveSpeed = 1f;
-    public float rollingInvincibilityTime = 1f;
     public float rollingDistance = 2f;
+    public float knockback = 1f;
 
     [Space]
     [Header("UI")]
@@ -46,8 +46,6 @@ public class Player : MonoBehaviour {
     private Rigidbody2D rigid;
     private Animator anim;
     private bool staminaCharging = true;
-    private float invincibilityDelay = 0f;
-    private bool invincibility = false;
     private bool guard = true;
     private float guardGageDelay = 0f;
     private bool attacking = false;
@@ -55,10 +53,16 @@ public class Player : MonoBehaviour {
     private bool rolling = false;
     private float rollingDelay = 0f;
     private float staminaChargingDelay = 0f;
+    private bool canAttack = true;
+    private float canAttackDelay = 0f;
     [Space]
     [Header("ColliderBranch")]
     public ColliderBranch attackRangeCollider;
-    // Use this for initialization
+    [Space]
+    [Header("Prefab")]
+    public GameObject arrowPrefab;
+    public GameObject arrowDirectPrefab;
+    
     private void Start () 
     {
         currentPosition = transform.position;
@@ -88,14 +92,14 @@ public class Player : MonoBehaviour {
     }
     public void MinusHealth(int damage)
     {
-        if (invincibility)
+        if (rolling)
             return;
         else if (guard)
         {
             Guard();
             return;
         }
-
+        rigid.AddForce(new Vector2(-knockback, 0f));
         var nowHealth = health;
         health -= (health - damage >= 0) ? damage : health;
         if (healthBar != null)
@@ -165,12 +169,6 @@ public class Player : MonoBehaviour {
                 staminaCharging = true;
             }
         }
-        if(invincibility)
-        {
-            invincibilityDelay += Time.deltaTime;
-            if (invincibilityDelay >= rollingInvincibilityTime)
-                invincibility = false;
-        }
         if(!guard)
         {
             guardGageDelay += Time.deltaTime / guardChargingPerSecend;
@@ -193,6 +191,15 @@ public class Player : MonoBehaviour {
                 {
                     attackRangeCollider.mob.GetComponent<Enemy>().MinusHealth(damage);
                 }
+            }
+        }
+        if(!canAttack)
+        {
+            canAttackDelay += Time.deltaTime;
+            if(canAttackDelay>=attackDelay)
+            {
+                canAttackDelay = 0f;
+                canAttack = true;
             }
         }
         if(rolling)
@@ -225,23 +232,38 @@ public class Player : MonoBehaviour {
     }
     public void GoAttack()
     {
-        if (stamina < attackStamina||rolling)
-        {
+        if (stamina < attackStamina||rolling||!canAttack)
             return;
-        }
-        stamina -= attackStamina;
-        StartCoroutine(MinusStamina());
-        if (attacking)
+        if(weapon!=Weapon.Bow)
         {
-            anim.SetBool("DoubleAttack", true);
-            return;
+            stamina -= attackStamina;
+            StartCoroutine(MinusStamina());
+            if (attacking)
+            {
+                anim.SetBool("DoubleAttack", true);
+                return;
+            }
+            else
+            {
+                anim.SetBool("DoubleAttack", false);
+                anim.Play("Attack");
+            }
+            attacking = true;
+            canAttack = false;
         }
         else
         {
-            anim.SetBool("DoubleAttack", false);
-            anim.Play("Attack");
+            ShoutArrow();
         }
-        attacking = true;
+    }
+    public void ShoutArrow()
+    {
+        var go=Instantiate(arrowPrefab);
+        var pos = transform.position;
+        pos.y += 2f;
+        go.transform.position = pos;
+        go.transform.localRotation = transform.localRotation;
+        go.tag = "PlayerWeapon";
     }
     public void GoRolling()
     {
@@ -251,12 +273,6 @@ public class Player : MonoBehaviour {
         StartCoroutine(MinusStamina());
         anim.Play("Roll");
         rolling = true;
-        Invincibility();
         gameObject.layer = 8;
-    }
-    public void Invincibility()
-    {
-        invincibilityDelay = 0f;
-        invincibility = true;
     }
 }

@@ -13,7 +13,9 @@ public class Enemy : MonoBehaviour {
     private Animator anim;
     public int damage = 1;
     public bool canAttack = true;
+    public bool attacking = false;
     public float attackDelay = 2f;
+    public GameObject arrowPrefab;
     public EnemyType type;
     private Rigidbody2D rigid;
     public ColliderBranch seeCollider;
@@ -22,6 +24,8 @@ public class Enemy : MonoBehaviour {
     public float moveSpeed = 1f;
     private float delay=0f;
     public bool discoveryPlayer = false;
+    private float attackAnimPlayTime = 0.6f;
+    private float attackingDelay = 0f;
 
     public void Start()
     {
@@ -72,6 +76,28 @@ public class Enemy : MonoBehaviour {
                 canAttack = true;
             }
         }
+        if(attacking)
+        {
+            attackingDelay += Time.deltaTime;
+            if(attackingDelay>=attackAnimPlayTime)
+            {
+                if(seeCollider.mob!=null)
+                {
+                    seeCollider.mob.GetComponent<Player>().MinusHealth(damage);
+                }
+                attacking = false;
+                attackingDelay = 0f;
+            }
+        }
+    }
+    public void ShoutArrow()
+    {
+        var go = Instantiate(arrowPrefab);
+        var pos = transform.position;
+        pos.y += 2f;
+        go.transform.position = pos;
+        go.transform.localRotation = transform.localRotation;
+        go.tag = "EnemyWeapon";
     }
     public void OnCollisionEnter2D(Collision2D collision)
     {
@@ -82,8 +108,15 @@ public class Enemy : MonoBehaviour {
     }
     public void GoAttack()
     {
-        seeCollider.mob.GetComponent<Player>().MinusHealth(damage);
-        anim.Play("Attack");
-        canAttack = false;
+        if (type != EnemyType.BowMob)
+        {
+            anim.Play("Attack");
+            canAttack = false;
+            attacking = true;
+        }
+        else
+        {
+            ShoutArrow();
+        }
     }
 }
