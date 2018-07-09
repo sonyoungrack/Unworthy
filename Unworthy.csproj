@@ -334,6 +334,7 @@
     <Compile Include="Assets\Script\MoveBackground_close.cs" />
     <Compile Include="Assets\Script\MoveBackground_far.cs" />
     <Compile Include="Assets\Script\MoveBackground_middle.cs" />
+    <Compile Include="Assets\Script\Obstacle.cs" />
     <Compile Include="Assets\Script\Player.cs" />
     <Compile Include="Assets\Script\Potal.cs" />
     <Compile Include="Assets\Script\TestScript.cs" />

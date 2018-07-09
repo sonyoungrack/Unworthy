@@ -9,6 +9,7 @@ TagManager:
   - PlayerWeapon
   - Ground
   - Break
+  - Obstacle
   layers:
   - Default
   - TransparentFX
