@@ -9,9 +9,9 @@ public enum EnemyType
     BowMob
 }
 public class Enemy : MonoBehaviour {
-    public int health = 5;
-    private Animator anim;
-    public int damage = 1;
+    public int health = 100;
+    public int maxHealth = 100;
+    public int damage = 10;
     public bool canAttack = true;
     public bool attacking = false;
     public float attackDelay = 2f;
@@ -26,7 +26,10 @@ public class Enemy : MonoBehaviour {
     public bool discoveryPlayer = false;
     private float attackAnimPlayTime = 0.6f;
     private float attackingDelay = 0f;
-
+    public bool thisBoss = false;
+    public Camera cam;
+    [HideInInspector]
+    public Animator anim;
     public void Start()
     {
         anim = GetComponent<Animator>();
@@ -85,6 +88,8 @@ public class Enemy : MonoBehaviour {
                 {
                     seeCollider.mob.GetComponent<Player>().MinusHealth(damage);
                 }
+                if(thisBoss)
+                    GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>().ShakeCamera();
                 attacking = false;
                 attackingDelay = 0f;
             }

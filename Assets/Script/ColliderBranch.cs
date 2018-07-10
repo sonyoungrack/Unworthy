@@ -7,7 +7,7 @@ public enum ColliderType
     Eyesight,
     Crash_Determination,
     Can_Move,
-    AttackRange
+    AttackRange,
 }
 public class ColliderBranch : MonoBehaviour {
     public ColliderType type;

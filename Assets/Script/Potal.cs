@@ -13,7 +13,13 @@ public class Potal : MonoBehaviour {
     private bool alphaMinusing = false;
     public float teleportTime = 1f;
     private float teleportDelay = 0f;
-    
+    public bool BossPotal = false;
+    public BossRoom bossRoom;
+
+    private void Awake()
+    {
+        panel = GameObject.FindGameObjectWithTag("TeleportPanel").GetComponent<Image>();
+    }
     private void Update()
     {
         if(alphaMinusing)
@@ -47,6 +53,8 @@ public class Potal : MonoBehaviour {
                 {
                     collision.gameObject.transform.position = locationWithXY;
                 }
+                if (BossPotal)
+                    bossRoom.ShowHealthBar();
             }
         }
     }

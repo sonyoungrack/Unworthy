@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Video;
+using UnityEngine.SceneManagement;
 
 public enum Weapon
 {
@@ -16,11 +18,13 @@ public class Player : MonoBehaviour {
     public int maxHealth = 100;
     public float stamina = 100f;
     public float maxStamina = 100f;
-    public int damage = 1;
+    public int damage = 20;
+    public int skillDamage = 60;
     public float attackDelay = 1f;
     public float moveSpeed = 1f;
     public float rollingDistance = 2f;
-    public float knockback = 1f;
+    public float skillCoolDownTime = 5f;
+    public GameObject fallDeathHigh;
 
     [Space]
     [Header("UI")]
@@ -40,6 +44,7 @@ public class Player : MonoBehaviour {
     [Header("Reduction amount")]
     public float attackStamina = 15f;
     public float rollingStamina = 20f;
+    public float skillStamina = 30f;
     [HideInInspector]
     public Vector3 distance;
     public Vector3 currentPosition;
@@ -47,6 +52,7 @@ public class Player : MonoBehaviour {
     private Animator anim;
     private bool staminaCharging = true;
     private bool guard = true;
+    private bool canSkill = true;
     private float guardGageDelay = 0f;
     private bool attacking = false;
     private float attackingDelay = 0f;
@@ -55,13 +61,17 @@ public class Player : MonoBehaviour {
     private float staminaChargingDelay = 0f;
     private bool canAttack = true;
     private float canAttackDelay = 0f;
+    private float skillCoolDelay = 0f;
+    private VideoPlayer vp;
     [Space]
     [Header("ColliderBranch")]
     public ColliderBranch attackRangeCollider;
     [Space]
     [Header("Prefab")]
+    public GameObject skillPrefab;
     public GameObject arrowPrefab;
     public GameObject arrowDirectPrefab;
+    private bool gameOver=false;
     
     private void Start () 
     {
@@ -72,6 +82,7 @@ public class Player : MonoBehaviour {
     {
         anim = GetComponent<Animator>();
         rigid = GetComponent<Rigidbody2D>();
+        vp = GetComponent<VideoPlayer>();
     }
 
     public void Guard()
@@ -90,16 +101,18 @@ public class Player : MonoBehaviour {
             havePortionText.text = "x" + havePortion;
         }
     }
-    public void MinusHealth(int damage)
+    public void MinusHealth(int damage, bool guardIgnore = false)
     {
-        if (rolling)
-            return;
-        else if (guard)
+        if(!guardIgnore)
         {
-            Guard();
-            return;
+            if (rolling)
+                return;
+            else if (guard)
+            {
+                Guard();
+                return;
+            }
         }
-        rigid.AddForce(new Vector2(-knockback, 0f));
         var nowHealth = health;
         health -= (health - damage >= 0) ? damage : health;
         if (healthBar != null)
@@ -125,7 +138,6 @@ public class Player : MonoBehaviour {
         }
         healthBar.fillAmount = (float)health / maxHealth;
     }
-    // Update is called once per frame
     void Update() {
         if (Input.GetKeyDown(KeyCode.Space))
         {
@@ -186,11 +198,19 @@ public class Player : MonoBehaviour {
             if (attackingDelay >= tempTime)
             {
                 attackingDelay = 0f;
-                attacking = false;
                 if (attackRangeCollider.mob != null)
                 {
-                    attackRangeCollider.mob.GetComponent<Enemy>().MinusHealth(damage);
+                    if(anim.GetBool("DoubleAttack"))
+                    {
+                        attackRangeCollider.mob.GetComponent<Enemy>().MinusHealth(damage*2);
+                    }
+                    else
+                    {
+                        attackRangeCollider.mob.GetComponent<Enemy>().MinusHealth(damage);
+                    }
                 }
+                canAttack = false;
+                attacking = false;
             }
         }
         if(!canAttack)
@@ -206,7 +226,8 @@ public class Player : MonoBehaviour {
         {
             rollingDelay += Time.deltaTime;
             var angle = (transform.localRotation.y == -1) ? -1 : 1;
-            rigid.MovePosition(new Vector2(transform.position.x+(angle*Time.deltaTime*rollingDistance),transform.position.y));
+            rigid.velocity = new Vector2(angle*rollingDistance, rigid.velocity.y);
+            //rigid.MovePosition(new Vector2(transform.position.x+(angle*Time.deltaTime*rollingDistance),transform.position.y));
             if (rollingDelay >= 0.5f)
             {
                 rollingDelay = 0f;
@@ -217,6 +238,44 @@ public class Player : MonoBehaviour {
         if(Input.GetKeyDown(KeyCode.X))
         {
             DrinkingPortion();
+        }
+        if(Input.GetKeyDown(KeyCode.Z))
+        {
+            if(canSkill)
+            {
+                if (stamina < skillStamina)
+                    return;
+                stamina -= skillStamina;
+                StartCoroutine(MinusStamina());
+                var go=Instantiate(skillPrefab);
+                anim.Play("Attack");
+                go.transform.position = transform.position;
+                var directionIsRight = transform.rotation.y == 0f;
+                go.GetComponent<SwordSkill>().SetSkill("PlayerWeapon",0.167f, 10, 0, directionIsRight,skillDamage);
+                canSkill = false;
+            }
+        }
+        if(!canSkill)
+        {
+            skillCoolDelay += Time.deltaTime;
+            if(skillCoolDelay>=skillCoolDownTime)
+            {
+                canSkill = true;
+                skillCoolDelay = 0f;
+            }
+        }
+        if (health==0&&!gameOver)
+        {
+            vp.Play();
+            gameOver = true;
+        }
+        if(fallDeathHigh.transform.position.y>=transform.position.y)
+        {
+            MinusHealth(maxHealth,true);
+        }
+        if(gameOver&&Input.anyKeyDown)
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
     }
     public IEnumerator MinusStamina()
@@ -236,6 +295,7 @@ public class Player : MonoBehaviour {
             return;
         if(weapon!=Weapon.Bow)
         {
+            if((!anim.GetBool("DoubleAttack")&&attacking)||!attacking)
             stamina -= attackStamina;
             StartCoroutine(MinusStamina());
             if (attacking)
@@ -249,7 +309,6 @@ public class Player : MonoBehaviour {
                 anim.Play("Attack");
             }
             attacking = true;
-            canAttack = false;
         }
         else
         {

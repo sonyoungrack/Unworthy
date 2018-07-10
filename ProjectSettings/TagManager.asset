@@ -10,6 +10,8 @@ TagManager:
   - Ground
   - Break
   - Obstacle
+  - TipText
+  - TeleportPanel
   layers:
   - Default
   - TransparentFX
