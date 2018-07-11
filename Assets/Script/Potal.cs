@@ -54,7 +54,10 @@ public class Potal : MonoBehaviour {
                     collision.gameObject.transform.position = locationWithXY;
                 }
                 if (BossPotal)
+                {
                     bossRoom.ShowHealthBar();
+                    bossRoom.boss.playerExistence = true;
+                }
             }
         }
     }

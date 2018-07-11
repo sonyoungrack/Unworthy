@@ -40,10 +40,6 @@ public class Enemy : MonoBehaviour {
         health -= (health-damage>=0) ? damage : health;
         if (!seeCollider.lookPlayer)
             directionIsRight = !directionIsRight;
-        if(health==0)
-        {
-            Destroy(gameObject);
-        }
     }
     public void Update()
     {
@@ -122,6 +118,13 @@ public class Enemy : MonoBehaviour {
         else
         {
             ShoutArrow();
+        }
+    }
+    private void LateUpdate()
+    {
+        if (health == 0)
+        {
+            Destroy(gameObject);
         }
     }
 }

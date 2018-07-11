@@ -12,6 +12,7 @@ TagManager:
   - Obstacle
   - TipText
   - TeleportPanel
+  - BossHealthBar
   layers:
   - Default
   - TransparentFX
@@ -23,7 +24,7 @@ TagManager:
   - 
   - Player
   - Enemy
-  - 
+  - Obstacle
   - 
   - 
   - 

@@ -25,7 +25,6 @@ public class BossRoom : MonoBehaviour {
     }
     public void ShowHealthBar()
     {
-        Debug.Log("d");
         bossHealthBar.transform.parent.gameObject.SetActive(true);
     }
 }

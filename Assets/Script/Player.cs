@@ -103,11 +103,11 @@ public class Player : MonoBehaviour {
     }
     public void MinusHealth(int damage, bool guardIgnore = false)
     {
-        if(!guardIgnore)
+        if (rolling)
+            return;
+        if (!guardIgnore)
         {
-            if (rolling)
-                return;
-            else if (guard)
+            if (guard)
             {
                 Guard();
                 return;
@@ -139,141 +139,144 @@ public class Player : MonoBehaviour {
         healthBar.fillAmount = (float)health / maxHealth;
     }
     void Update() {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (!gameOver)
         {
-            GoAttack();
-        }
-        if (Input.GetAxisRaw("Horizontal") != 0)
-        {
-            if(!attacking&&!rolling)
+            if (Input.GetKeyDown(KeyCode.Space))
             {
-                anim.Play("Run");
-                anim.SetBool("Running", true);
-                var angle = (Input.GetAxisRaw("Horizontal") == 1f) ? 0f : 180f;
-
-                transform.rotation = Quaternion.Euler(0f, angle, 0f);
-                rigid.velocity = new Vector2(moveSpeed * Input.GetAxisRaw("Horizontal"), rigid.velocity.y);
+                GoAttack();
             }
-        }
-        else
-        {
-            anim.SetBool("Running", false);
-            rigid.velocity = new Vector2(0f, rigid.velocity.y);
-        }
-        if(Input.GetKeyDown(KeyCode.LeftControl))
-        {
-            GoRolling();
-        }
-        distance = transform.position - currentPosition;
-        currentPosition = transform.position;
-        if (staminaCharging)
-        {
-            if(stamina < maxStamina)
-                stamina += maxStamina * Time.deltaTime / staminaChargingPerSecend;
-            staminaBar.fillAmount = stamina / maxStamina;
-        }
-        else
-        {
-            staminaChargingDelay += Time.deltaTime;
-            if(staminaChargingDelay>=1f)
+            if (Input.GetAxisRaw("Horizontal") != 0)
             {
-                staminaChargingDelay = 0f;
-                staminaCharging = true;
-            }
-        }
-        if(!guard)
-        {
-            guardGageDelay += Time.deltaTime / guardChargingPerSecend;
-            guardGage.fillAmount = guardGageDelay;
-            if(guardGageDelay>=1f)
-            {
-                guard = true;
-                guardGageDelay = 0f;
-            }
-        }
-        if(attacking)
-        {
-            attackingDelay += Time.deltaTime;
-            var tempTime = anim.GetBool("DoubleAttack") ? 0.9f : 0.6f;
-            if (attackingDelay >= tempTime)
-            {
-                attackingDelay = 0f;
-                if (attackRangeCollider.mob != null)
+                if (!attacking && !rolling)
                 {
-                    if(anim.GetBool("DoubleAttack"))
-                    {
-                        attackRangeCollider.mob.GetComponent<Enemy>().MinusHealth(damage*2);
-                    }
-                    else
-                    {
-                        attackRangeCollider.mob.GetComponent<Enemy>().MinusHealth(damage);
-                    }
+                    anim.Play("Run");
+                    anim.SetBool("Running", true);
+                    var angle = (Input.GetAxisRaw("Horizontal") == 1f) ? 0f : 180f;
+
+                    transform.rotation = Quaternion.Euler(0f, angle, 0f);
+                    rigid.velocity = new Vector2(moveSpeed * Input.GetAxisRaw("Horizontal"), rigid.velocity.y);
                 }
-                canAttack = false;
-                attacking = false;
             }
-        }
-        if(!canAttack)
-        {
-            canAttackDelay += Time.deltaTime;
-            if(canAttackDelay>=attackDelay)
+            else
             {
-                canAttackDelay = 0f;
-                canAttack = true;
+                anim.SetBool("Running", false);
+                rigid.velocity = new Vector2(0f, rigid.velocity.y);
             }
-        }
-        if(rolling)
-        {
-            rollingDelay += Time.deltaTime;
-            var angle = (transform.localRotation.y == -1) ? -1 : 1;
-            rigid.velocity = new Vector2(angle*rollingDistance, rigid.velocity.y);
-            //rigid.MovePosition(new Vector2(transform.position.x+(angle*Time.deltaTime*rollingDistance),transform.position.y));
-            if (rollingDelay >= 0.5f)
+            if (Input.GetKeyDown(KeyCode.LeftControl))
             {
-                rollingDelay = 0f;
-                rolling = false;
-                gameObject.layer = 0;
+                GoRolling();
             }
-        }
-        if(Input.GetKeyDown(KeyCode.X))
-        {
-            DrinkingPortion();
-        }
-        if(Input.GetKeyDown(KeyCode.Z))
-        {
-            if(canSkill)
+            distance = transform.position - currentPosition;
+            currentPosition = transform.position;
+            if (staminaCharging)
             {
-                if (stamina < skillStamina)
-                    return;
-                stamina -= skillStamina;
-                StartCoroutine(MinusStamina());
-                var go=Instantiate(skillPrefab);
-                anim.Play("Attack");
-                go.transform.position = transform.position;
-                var directionIsRight = transform.rotation.y == 0f;
-                go.GetComponent<SwordSkill>().SetSkill("PlayerWeapon",0.167f, 10, 0, directionIsRight,skillDamage);
-                canSkill = false;
+                if (stamina < maxStamina)
+                    stamina += maxStamina * Time.deltaTime / staminaChargingPerSecend;
+                staminaBar.fillAmount = stamina / maxStamina;
             }
-        }
-        if(!canSkill)
-        {
-            skillCoolDelay += Time.deltaTime;
-            if(skillCoolDelay>=skillCoolDownTime)
+            else
             {
-                canSkill = true;
-                skillCoolDelay = 0f;
+                staminaChargingDelay += Time.deltaTime;
+                if (staminaChargingDelay >= 1f)
+                {
+                    staminaChargingDelay = 0f;
+                    staminaCharging = true;
+                }
+            }
+            if (!guard)
+            {
+                guardGageDelay += Time.deltaTime / guardChargingPerSecend;
+                guardGage.fillAmount = guardGageDelay;
+                if (guardGageDelay >= 1f)
+                {
+                    guard = true;
+                    guardGageDelay = 0f;
+                }
+            }
+            if (attacking)
+            {
+                attackingDelay += Time.deltaTime;
+                var tempTime = anim.GetBool("DoubleAttack") ? 0.9f : 0.6f;
+                if (attackingDelay >= tempTime)
+                {
+                    attackingDelay = 0f;
+                    if (attackRangeCollider.mob != null)
+                    {
+                        if (anim.GetBool("DoubleAttack"))
+                        {
+                            attackRangeCollider.mob.GetComponent<Enemy>().MinusHealth(damage * 2);
+                        }
+                        else
+                        {
+                            attackRangeCollider.mob.GetComponent<Enemy>().MinusHealth(damage);
+                        }
+                    }
+                    canAttack = false;
+                    attacking = false;
+                }
+            }
+            if (!canAttack)
+            {
+                canAttackDelay += Time.deltaTime;
+                if (canAttackDelay >= attackDelay)
+                {
+                    canAttackDelay = 0f;
+                    canAttack = true;
+                }
+            }
+            if (rolling)
+            {
+                rollingDelay += Time.deltaTime;
+                var angle = (transform.localRotation.y == -1) ? -1 : 1;
+                rigid.velocity = new Vector2(angle * rollingDistance, rigid.velocity.y);
+                //rigid.MovePosition(new Vector2(transform.position.x+(angle*Time.deltaTime*rollingDistance),transform.position.y));
+                if (rollingDelay >= 0.5f)
+                {
+                    rollingDelay = 0f;
+                    rolling = false;
+                    gameObject.layer = 0;
+                }
+            }
+            if (Input.GetKeyDown(KeyCode.X))
+            {
+                DrinkingPortion();
+            }
+            if (Input.GetKeyDown(KeyCode.Z))
+            {
+                if (canSkill)
+                {
+                    if (stamina < skillStamina)
+                        return;
+                    stamina -= skillStamina;
+                    StartCoroutine(MinusStamina());
+                    var go = Instantiate(skillPrefab);
+                    anim.Play("Attack");
+                    go.transform.position = transform.position;
+                    var directionIsRight = transform.rotation.y == 0f;
+                    go.GetComponent<SwordSkill>().SetSkill("PlayerWeapon", 0.167f, 10, 0, directionIsRight, skillDamage);
+                    canSkill = false;
+                }
+            }
+            if (!canSkill)
+            {
+                skillCoolDelay += Time.deltaTime;
+                if (skillCoolDelay >= skillCoolDownTime)
+                {
+                    canSkill = true;
+                    skillCoolDelay = 0f;
+                }
+            }
+            if (health == 0)
+            {
+                vp.Play();
+                gameOver = true;
+            }
+            if (fallDeathHigh.transform.position.y >= transform.position.y)
+            {
+                MinusHealth(maxHealth, true);
             }
         }
-        if (health==0&&!gameOver)
-        {
-            vp.Play();
-            gameOver = true;
-        }
-        if(fallDeathHigh.transform.position.y>=transform.position.y)
-        {
-            MinusHealth(maxHealth,true);
-        }
-        if(gameOver&&Input.anyKeyDown)
+        else if(Input.anyKeyDown&&!vp.isPlaying)
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
